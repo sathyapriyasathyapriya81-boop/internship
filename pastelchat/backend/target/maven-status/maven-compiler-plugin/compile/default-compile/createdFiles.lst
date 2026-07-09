@@ -1,0 +1,14 @@
+com\pastelchat\model\Message.class
+com\pastelchat\config\WebConfig.class
+com\pastelchat\repository\UserRepository.class
+com\pastelchat\service\MessageService.class
+com\pastelchat\service\UserService.class
+com\pastelchat\controller\MessageController.class
+com\pastelchat\config\SecurityConfig.class
+com\pastelchat\model\Message$MessageBuilder.class
+com\pastelchat\PastelChatApplication.class
+com\pastelchat\model\User$UserBuilder.class
+com\pastelchat\model\User.class
+com\pastelchat\repository\MessageRepository.class
+com\pastelchat\controller\ViewController.class
+com\pastelchat\controller\UserController.class

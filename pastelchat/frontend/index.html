@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PastelChat 💬</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f5f0fa;color:#3d2f5e;min-height:100vh}
+input,button,textarea{font-family:'Nunito',sans-serif}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#d8b4fe;border-radius:99px}
+
+/* ═══════════════════════════════════════════════
+   CSS VARIABLES
+═══════════════════════════════════════════════ */
+:root{
+  --bg:#f5f0fa;
+  --white:#ffffff;
+  --accent:#a78bfa;
+  --accent-dark:#7c5ccc;
+  --accent-light:#ede9fe;
+  --text:#3d2f5e;
+  --muted:#9b8ab4;
+  --border:rgba(167,139,250,0.22);
+  --shadow:rgba(124,92,204,0.13);
+  --bubble-me:#c4b5fd;
+  --bubble-me-txt:#2d1f4e;
+  --bubble-other:#ffffff;
+  --danger:#f87171;
+  --danger-bg:rgba(248,113,113,0.1);
+  --online:#86efac;
+  --sidebar-w:300px;
+}
+
+/* ═══════════════════════════════════════════════
+   AUTH PAGES (Register / Login)
+═══════════════════════════════════════════════ */
+.auth-page{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  background:linear-gradient(135deg,#f0ebff 0%,#fdf4ff 50%,#fff0f8 100%);
+  position:relative;overflow:hidden;
+}
+.blob{
+  position:fixed;border-radius:50%;filter:blur(50px);pointer-events:none;
+}
+.blob-1{width:340px;height:340px;top:-80px;left:-60px;background:rgba(196,181,253,.28)}
+.blob-2{width:260px;height:260px;bottom:-60px;right:-40px;background:rgba(251,207,232,.32)}
+.blob-3{width:200px;height:200px;top:40%;left:62%;background:rgba(187,247,208,.22)}
+
+.auth-card{
+  background:rgba(255,255,255,.88);backdrop-filter:blur(20px);
+  border-radius:24px;padding:38px 36px;width:440px;max-width:96vw;
+  border:1px solid var(--border);
+  box-shadow:0 16px 60px rgba(167,139,250,.18),0 4px 20px rgba(0,0,0,.06);
+  position:relative;z-index:1;
+}
+
+/* Logo */
+.logo{display:flex;flex-direction:column;align-items:center;margin-bottom:24px}
+.logo-icon{
+  width:64px;height:64px;border-radius:22px;
+  background:linear-gradient(135deg,#a78bfa,#c084fc);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin-bottom:10px;
+  box-shadow:0 8px 24px rgba(167,139,250,.42);
+}
+.logo-text{font-weight:900;font-size:22px;color:var(--text)}
+.logo-text span{color:var(--accent)}
+
+.auth-title{font-weight:900;font-size:24px;text-align:center;margin-bottom:4px}
+.auth-sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:22px;font-weight:500}
+
+/* Form fields */
+.field{margin-bottom:14px}
+.field label{
+  display:block;font-size:11px;font-weight:800;color:var(--muted);
+  letter-spacing:.8px;margin-bottom:5px;text-transform:uppercase;
+}
+.field-wrap{position:relative}
+.field-icon{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;
+}
+.field input{
+  width:100%;background:#f9f6ff;border:2px solid var(--border);
+  border-radius:14px;padding:12px 14px 12px 40px;
+  color:var(--text);font-size:14px;font-weight:500;outline:none;
+  transition:border .2s,box-shadow .2s;
+}
+.field input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(167,139,250,.18);
+}
+.field input.error{border-color:var(--danger)}
+
+/* Password strength bar */
+.pwd-strength{margin-top:6px;display:flex;gap:4px}
+.pwd-bar{height:4px;flex:1;border-radius:99px;background:#e5e0ef;transition:background .3s}
+.pwd-bar.weak{background:#f87171}
+.pwd-bar.fair{background:#fbbf24}
+.pwd-bar.good{background:#34d399}
+.pwd-bar.strong{background:#10b981}
+.pwd-label{font-size:11px;font-weight:700;margin-top:4px}
+.pwd-label.weak{color:#f87171}
+.pwd-label.fair{color:#fbbf24}
+.pwd-label.good{color:#34d399}
+.pwd-label.strong{color:#10b981}
+
+/* Alert chips */
+.chip{
+  border-radius:12px;padding:10px 14px;font-size:13px;
+  font-weight:600;margin-bottom:14px;border:1px solid;
+}
+.chip.error{color:var(--danger);background:var(--danger-bg);border-color:rgba(248,113,113,.3)}
+.chip.success{color:var(--accent-dark);background:var(--accent-light);border-color:var(--border)}
+
+/* Primary button */
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,#a78bfa,#c084fc);
+  border:none;border-radius:14px;padding:14px;color:#fff;
+  font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.3px;
+  box-shadow:0 6px 22px rgba(167,139,250,.45);transition:opacity .2s,transform .1s;
+  margin-top:4px;
+}
+.btn-primary:hover{opacity:.92;transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.auth-link{color:var(--muted);text-align:center;margin-top:18px;font-size:14px}
+.auth-link a{color:var(--accent);cursor:pointer;font-weight:700;text-decoration:none}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD LAYOUT
+═══════════════════════════════════════════════ */
+#app-dashboard{
+  display:none;height:100vh;overflow:hidden;
+  background:var(--bg);
+}
+
+/* ── Sidebar ── */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
+  background:var(--white);border-right:1px solid var(--border);
+  box-shadow:4px 0 20px var(--shadow);
+  display:flex;flex-direction:column;z-index:10;
+}
+
+.sidebar-header{
+  background:linear-gradient(135deg,#a78bfa 0%,#c084fc 100%);
+  padding:18px 16px 14px;
+}
+.sidebar-profile{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;
+}
+.sidebar-user{display:flex;align-items:center;gap:10px}
+.sidebar-user .user-name{font-weight:800;color:#fff;font-size:15px}
+.sidebar-user .user-status{color:rgba(255,255,255,.8);font-size:12px;font-weight:500}
+
+.btn-logout{
+  background:rgba(255,255,255,.22);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.35);color:#fff;
+  border-radius:10px;padding:6px 13px;cursor:pointer;
+  font-size:12px;font-family:'Nunito',sans-serif;font-weight:700;
+  transition:background .2s;
+}
+.btn-logout:hover{background:rgba(255,255,255,.32)}
+
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.75}
+.sidebar-search{
+  width:100%;background:rgba(255,255,255,.26);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.35);border-radius:12px;
+  padding:10px 14px 10px 34px;color:#fff;font-size:13px;
+  font-family:'Nunito',sans-serif;outline:none;font-weight:500;
+}
+.sidebar-search::placeholder{color:rgba(255,255,255,.7)}
+
+.sidebar-label{
+  padding:13px 16px 6px;
+  font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;
+}
+
+.user-list{flex:1;overflow-y:auto}
+
+.user-item{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 16px;cursor:pointer;transition:background .15s;
+  border-left:3px solid transparent;border-bottom:1px solid var(--border);
+}
+.user-item:hover{background:#faf8ff}
+.user-item.active{
+  background:var(--accent-light);border-left-color:var(--accent);
+}
+.user-item-info{flex:1;min-width:0}
+.user-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+.user-item-name{font-weight:800;color:var(--text);font-size:14px}
+.user-item-time{color:var(--muted);font-size:10px;font-weight:600}
+.user-item-bottom{display:flex;justify-content:space-between;align-items:center}
+.user-item-preview{
+  color:var(--muted);font-size:12px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;max-width:150px;
+}
+.badge{
+  background:var(--accent);color:#fff;border-radius:99px;
+  font-size:10px;padding:2px 7px;font-weight:800;
+}
+
+/* ── Avatar ── */
+.avatar{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;letter-spacing:.5px;
+  box-shadow:0 2px 8px rgba(124,92,204,.15);flex-shrink:0;
+  position:relative;
+}
+.avatar.sm{width:30px;height:30px;font-size:11px}
+.avatar.lg{width:48px;height:48px;font-size:18px}
+.avatar .dot{
+  position:absolute;bottom:1px;right:1px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--online);border:2px solid #fff;
+}
+
+/* ── Chat Panel ── */
+.chat-panel{
+  margin-left:var(--sidebar-w);height:100vh;
+  display:flex;flex-direction:column;
+  background:#fdf8ff;
+}
+
+.chat-empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+}
+.chat-empty .empty-icon{font-size:72px}
+.chat-empty h2{font-weight:900;font-size:22px;color:var(--text)}
+.chat-empty p{color:var(--muted);font-size:14px}
+
+/* Chat header */
+.chat-header{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:13px 22px;display:flex;align-items:center;gap:14px;
+  box-shadow:0 2px 12px var(--shadow);flex-shrink:0;
+}
+.chat-header-info{flex:1}
+.chat-header-name{font-weight:800;color:var(--text);font-size:15px}
+.chat-header-status{color:var(--accent);font-size:12px;font-weight:600}
+.chat-actions{display:flex;gap:8px}
+.chat-action-btn{
+  background:var(--accent-light);border:1px solid var(--border);
+  color:var(--accent);border-radius:12px;width:38px;height:38px;
+  cursor:pointer;font-size:16px;display:flex;align-items:center;
+  justify-content:center;transition:background .2s;
+}
+.chat-action-btn:hover{background:#ddd6fe}
+
+/* Messages area */
+.messages{
+  flex:1;overflow-y:auto;padding:20px 28px;
+  display:flex;flex-direction:column;gap:5px;
+  background-image:
+    radial-gradient(circle at 15% 50%,rgba(196,181,253,.07) 0%,transparent 55%),
+    radial-gradient(circle at 85% 20%,rgba(251,207,232,.07) 0%,transparent 55%);
+}
+
+.day-label{
+  text-align:center;margin:14px 0 8px;
+}
+.day-label span{
+  background:rgba(167,139,250,.12);color:var(--muted);
+  border-radius:99px;padding:4px 14px;font-size:11px;font-weight:700;
+}
+
+.msg-row{display:flex;align-items:flex-end;gap:7px}
+.msg-row.me{justify-content:flex-end}
+.msg-row.them{justify-content:flex-start}
+
+.bubble{
+  max-width:62%;border-radius:18px;
+  padding:10px 14px;font-size:14px;
+  word-break:break-word;line-height:1.5;
+}
+.me .bubble{
+  background:var(--bubble-me);color:var(--bubble-me-txt);
+  border-radius:18px 4px 18px 18px;
+  box-shadow:0 3px 12px rgba(167,139,250,.35);
+}
+.them .bubble{
+  background:var(--bubble-other);color:var(--text);
+  border-radius:4px 18px 18px 18px;
+  box-shadow:0 3px 12px var(--shadow);
+  border:1px solid var(--border);
+}
+
+.bubble img{max-width:100%;border-radius:10px;display:block;margin-bottom:6px;cursor:pointer}
+.bubble video{max-width:100%;border-radius:10px;display:block;margin-bottom:6px}
+.bubble .file-link{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:10px;
+  text-decoration:none;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,.35);
+  color:var(--bubble-me-txt);margin-bottom:6px;
+}
+.them .bubble .file-link{background:var(--accent-light);color:var(--accent-dark)}
+
+.msg-time{
+  font-size:10px;font-weight:600;margin-top:4px;
+  text-align:right;opacity:.55;
+}
+.tick{color:var(--accent-dark)}
+
+/* Media preview bar */
+.media-preview{
+  background:var(--white);border-top:1px solid var(--border);
+  padding:10px 22px;display:flex;align-items:center;gap:12px;
+}
+.preview-label{font-size:11px;font-weight:800;color:var(--muted)}
+.preview-img{height:60px;border-radius:10px;border:2px solid var(--accent)}
+.preview-file{
+  background:var(--accent-light);border:1px solid var(--border);
+  border-radius:10px;padding:9px 14px;color:var(--accent-dark);
+  font-size:13px;font-weight:700;
+}
+.btn-remove-preview{
+  background:var(--danger-bg);border:1px solid rgba(248,113,113,.35);
+  color:var(--danger);border-radius:50%;width:26px;height:26px;
+  cursor:pointer;font-size:13px;font-weight:800;display:flex;
+  align-items:center;justify-content:center;
+}
+
+/* Input bar */
+.input-bar{
+  background:var(--white);border-top:1px solid var(--border);
+  padding:13px 22px;display:flex;gap:8px;align-items:center;
+  flex-shrink:0;
+}
+.attach-btn{
+  background:var(--accent-light);border:1px solid var(--border);
+  color:var(--accent);border-radius:12px;width:40px;height:40px;
+  cursor:pointer;font-size:17px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;transition:background .2s;
+}
+.attach-btn:hover{background:#ddd6fe}
+.msg-input{
+  flex:1;background:#f9f6ff;border:2px solid var(--border);
+  border-radius:16px;padding:11px 16px;color:var(--text);font-size:14px;
+  font-family:'Nunito',sans-serif;outline:none;transition:border .2s;
+  font-weight:500;
+}
+.msg-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(167,139,250,.15)}
+.msg-input::placeholder{color:#c4b5fd}
+.send-btn{
+  background:linear-gradient(135deg,#a78bfa,#c084fc);
+  border:none;border-radius:14px;width:46px;height:46px;
+  cursor:pointer;font-size:20px;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(167,139,250,.45);flex-shrink:0;
+  transition:opacity .2s,transform .1s;
+}
+.send-btn:hover{opacity:.9;transform:scale(1.05)}
+.send-btn:active{transform:scale(.97)}
+
+/* Lightbox */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,.82);align-items:center;justify-content:center;
+}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;border-radius:14px}
+.lightbox-close{
+  position:fixed;top:18px;right:22px;color:#fff;
+  font-size:32px;cursor:pointer;line-height:1;background:none;border:none;
+}
+
+/* Loading spinner */
+.spinner{
+  width:28px;height:28px;border:3px solid var(--accent-light);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Responsive */
+@media(max-width:640px){
+  :root{--sidebar-w:0px}
+  .sidebar{transform:translateX(-300px);transition:transform .3s}
+  .sidebar.open{transform:translateX(0);width:300px}
+  .chat-panel{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ BLOBS (shared) ═══════════════ -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- ═══════════════ REGISTER PAGE ═══════════════ -->
+<div id="page-register" class="auth-page">
+  <div class="auth-card">
+    <div class="logo">
+      <div class="logo-icon">💬</div>
+      <div class="logo-text"><span>Pastel</span>Chat</div>
+    </div>
+    <h2 class="auth-title">Create Account ✨</h2>
+    <p class="auth-sub">Join and start chatting with friends</p>
+
+    <div id="reg-alert" class="chip error" style="display:none"></div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <div class="field-wrap">
+        <span class="field-icon">👤</span>
+        <input type="text" id="reg-name" placeholder="Your full name"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Email Address</label>
+      <div class="field-wrap">
+        <span class="field-icon">✉️</span>
+        <input type="email" id="reg-email" placeholder="you@email.com"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Phone Number</label>
+      <div class="field-wrap">
+        <span class="field-icon">📱</span>
+        <input type="tel" id="reg-phone" placeholder="10-digit mobile number" maxlength="10"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔒</span>
+        <input type="password" id="reg-password" placeholder="Min 8 chars, A-z, 0-9, symbol" oninput="checkPwd(this.value)"/>
+      </div>
+      <div class="pwd-strength">
+        <div class="pwd-bar" id="bar1"></div>
+        <div class="pwd-bar" id="bar2"></div>
+        <div class="pwd-bar" id="bar3"></div>
+        <div class="pwd-bar" id="bar4"></div>
+      </div>
+      <div class="pwd-label" id="pwd-label"></div>
+    </div>
+    <div class="field">
+      <label>Confirm Password</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔑</span>
+        <input type="password" id="reg-confirm" placeholder="Re-enter password"/>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="register()">Create Account →</button>
+    <p class="auth-link">Already have an account? <a onclick="showPage('login')">Sign In</a></p>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="page-login" class="auth-page" style="display:none">
+  <div class="auth-card">
+    <div class="logo">
+      <div class="logo-icon">💬</div>
+      <div class="logo-text"><span>Pastel</span>Chat</div>
+    </div>
+    <h2 class="auth-title">Welcome Back 👋</h2>
+    <p class="auth-sub">Sign in to continue your chats</p>
+
+    <div id="login-alert" class="chip error" style="display:none"></div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <div class="field-wrap">
+        <span class="field-icon">✉️</span>
+        <input type="email" id="login-email" placeholder="you@email.com"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔒</span>
+        <input type="password" id="login-password" placeholder="Your password"/>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="login()">Sign In →</button>
+    <p class="auth-link">New here? <a onclick="showPage('register')">Create an account</a></p>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="app-dashboard">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-profile">
+        <div class="sidebar-user">
+          <div class="avatar lg" id="my-avatar"></div>
+          <div>
+            <div class="user-name" id="my-name"></div>
+            <div class="user-status">● Online</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="sidebar-search" placeholder="Search people…" oninput="filterUsers(this.value)" id="search-input"/>
+      </div>
+    </div>
+    <div class="sidebar-label" id="user-count-label">ALL USERS</div>
+    <div class="user-list" id="user-list">
+      <div style="padding:24px;text-align:center"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- Chat Panel -->
+  <div class="chat-panel" id="chat-panel">
+    <!-- Empty state -->
+    <div class="chat-empty" id="chat-empty">
+      <div class="empty-icon">🌷</div>
+      <h2>Pick a conversation</h2>
+      <p>Select someone from the left to start chatting</p>
+    </div>
+
+    <!-- Active chat (hidden until user selected) -->
+    <div id="active-chat" style="display:none;flex:1;flex-direction:column;height:100%">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="avatar" id="chat-avatar"></div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chat-name"></div>
+          <div class="chat-header-status" id="chat-status">Active now</div>
+        </div>
+        <div class="chat-actions">
+          <button class="chat-action-btn" title="Voice call">📞</button>
+          <button class="chat-action-btn" title="Video call">🎥</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages" id="messages"></div>
+
+      <!-- Media preview -->
+      <div class="media-preview" id="media-preview" style="display:none">
+        <span class="preview-label">PREVIEW</span>
+        <div id="preview-content"></div>
+        <button class="btn-remove-preview" onclick="clearMedia()">✕</button>
+      </div>
+
+      <!-- Input bar -->
+      <div class="input-bar">
+        <input type="file" id="file-any"   accept="*"       style="display:none" onchange="fileSelected(this,'file')"/>
+        <input type="file" id="file-image" accept="image/*" style="display:none" onchange="fileSelected(this,'image')"/>
+        <input type="file" id="file-video" accept="video/*" style="display:none" onchange="fileSelected(this,'video')"/>
+
+        <button class="attach-btn" title="Attach file"  onclick="document.getElementById('file-any').click()">📎</button>
+        <button class="attach-btn" title="Send image"   onclick="document.getElementById('file-image').click()">🖼️</button>
+        <button class="attach-btn" title="Send video"   onclick="document.getElementById('file-video').click()">🎥</button>
+
+        <input class="msg-input" type="text" id="msg-input"
+               placeholder="Type a message… 🌸"
+               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"/>
+
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox for images -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt=""/>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+/* ── Config ──────────────────────────────────────── */
+const API = 'http://localhost:8080/api';   // ← Java backend URL
+
+/* ── State ───────────────────────────────────────── */
+let currentUser   = JSON.parse(sessionStorage.getItem('user') || 'null');
+let activeContact = null;
+let allUsers      = [];
+let mediaFile     = null;
+let pollTimer     = null;
+
+/* ── Init ────────────────────────────────────────── */
+window.onload = () => {
+  if (currentUser) openDashboard();
+  else showPage('login');
+};
+
+/* ── Page navigation ─────────────────────────────── */
+function showPage(page) {
+  ['register','login'].forEach(p =>
+    document.getElementById('page-' + p).style.display = p === page ? 'flex' : 'none'
+  );
+}
+
+/* ── Password strength ───────────────────────────── */
+function checkPwd(pwd) {
+  const bars  = [1,2,3,4].map(i => document.getElementById('bar'+i));
+  const label = document.getElementById('pwd-label');
+  let score = 0;
+  if(pwd.length >= 8)                      score++;
+  if(/[A-Z]/.test(pwd))                   score++;
+  if(/\d/.test(pwd))                       score++;
+  if(/[@$!%*?&#_\-]/.test(pwd))           score++;
+
+  const levels = ['','weak','fair','good','strong'];
+  const labels = ['','Weak 🔴','Fair 🟡','Good 🟢','Strong 💪'];
+
+  bars.forEach((b,i) => {
+    b.className = 'pwd-bar ' + (i < score ? levels[score] : '');
+  });
+  label.textContent = pwd ? labels[score] : '';
+  label.className   = 'pwd-label ' + (pwd ? levels[score] : '');
+}
+
+/* ── Register ────────────────────────────────────── */
+async function register() {
+  clearAlert('reg-alert');
+  const name     = val('reg-name');
+  const email    = val('reg-email');
+  const phone    = val('reg-phone');
+  const password = val('reg-password');
+  const confirm  = val('reg-confirm');
+
+  // Client-side quick checks
+  if (!name || !email || !phone || !password || !confirm)
+    return showAlert('reg-alert','Please fill all fields.');
+  if (password !== confirm)
+    return showAlert('reg-alert','Passwords do not match.');
+
+  const btn = document.querySelector('#page-register .btn-primary');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  try {
+    const res  = await post('/users/register', {name, email, phone, password});
+    const data = await res.json();
+    if (data.success) {
+      currentUser = data.user;
+      sessionStorage.setItem('user', JSON.stringify(currentUser));
+      openDashboard();
+    } else {
+      const msgs = Array.isArray(data.errors) ? data.errors.join('\n') : 'Registration failed.';
+      showAlert('reg-alert', msgs);
+    }
+  } catch(e) {
+    showAlert('reg-alert','Cannot reach server. Is the backend running?');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account →';
+  }
+}
+
+/* ── Login ───────────────────────────────────────── */
+async function login() {
+  clearAlert('login-alert');
+  const email    = val('login-email');
+  const password = val('login-password');
+  if (!email || !password) return showAlert('login-alert','Please enter email and password.');
+
+  const btn = document.querySelector('#page-login .btn-primary');
+  btn.disabled = true; btn.textContent = 'Signing in…';
+
+  try {
+    const res  = await post('/users/login', {email, password});
+    const data = await res.json();
+    if (data.success) {
+      currentUser = data.user;
+      sessionStorage.setItem('user', JSON.stringify(currentUser));
+      openDashboard();
+    } else {
+      showAlert('login-alert', data.errors?.[0] || 'Login failed.');
+    }
+  } catch(e) {
+    showAlert('login-alert','Cannot reach server. Is the backend running?');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In →';
+  }
+}
+
+/* ── Logout ──────────────────────────────────────── */
+async function logout() {
+  if (currentUser) {
+    try { await fetch(`${API}/users/${currentUser.id}/logout`, {method:'POST'}); } catch(_){}
+  }
+  clearInterval(pollTimer);
+  currentUser = null; activeContact = null;
+  sessionStorage.removeItem('user');
+  document.getElementById('app-dashboard').style.display = 'none';
+  ['page-register','page-login'].forEach(p =>
+    document.getElementById(p).style.display = 'none'
+  );
+  showPage('login');
+}
+
+/* ── Dashboard ───────────────────────────────────── */
+function openDashboard() {
+  ['page-register','page-login'].forEach(p =>
+    document.getElementById(p).style.display = 'none'
+  );
+  document.getElementById('app-dashboard').style.display = 'flex';
+
+  // Set my avatar & name in sidebar
+  const myAv = document.getElementById('my-avatar');
+  myAv.textContent    = initials(currentUser.name);
+  myAv.style.background = currentUser.avatarColor || '#c4b5fd';
+  myAv.style.color    = '#2d1f4e';
+  document.getElementById('my-name').textContent = currentUser.name;
+
+  loadUsers();
+  clearInterval(pollTimer);
+  pollTimer = setInterval(refreshAll, 4000);  // poll every 4s
+}
+
+/* ── Load all users ──────────────────────────────── */
+async function loadUsers() {
+  try {
+    const res  = await fetch(`${API}/users`);
+    allUsers   = (await res.json()).filter(u => u.id !== currentUser.id);
+    renderUsers(allUsers);
+  } catch(e) {
+    document.getElementById('user-list').innerHTML =
+      '<p style="padding:20px;color:var(--muted);text-align:center">Could not load users.</p>';
+  }
+}
+
+function renderUsers(list) {
+  document.getElementById('user-count-label').textContent = `ALL USERS (${list.length})`;
+  const ul = document.getElementById('user-list');
+  if (!list.length) {
+    ul.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--muted)">🌸 No users found</div>';
+    return;
+  }
+  ul.innerHTML = list.map(u => `
+    <div class="user-item ${activeContact?.id===u.id?'active':''}" onclick="openChat(${u.id})">
+      <div class="avatar" style="background:${u.avatarColor||'#c4b5fd'};color:#2d1f4e">
+        ${initials(u.name)}
+        ${u.online ? '<span class="dot"></span>' : ''}
+      </div>
+      <div class="user-item-info">
+        <div class="user-item-top">
+          <span class="user-item-name">${esc(u.name)}</span>
+          <span class="user-item-time" id="time-${u.id}"></span>
+        </div>
+        <div class="user-item-bottom">
+          <span class="user-item-preview" id="preview-${u.id}">${esc(u.email)}</span>
+          <span class="badge" id="badge-${u.id}" style="display:none"></span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Load last-message previews & unread counts
+  list.forEach(u => loadUserPreview(u));
+}
+
+function filterUsers(q) {
+  const filtered = allUsers.filter(u =>
+    u.name.toLowerCase().includes(q.toLowerCase()) ||
+    u.email.toLowerCase().includes(q.toLowerCase())
+  );
+  renderUsers(filtered);
+}
+
+async function loadUserPreview(u) {
+  try {
+    const res  = await fetch(`${API}/messages/conversation?userA=${currentUser.id}&userB=${u.id}`);
+    const msgs = await res.json();
+    if (!msgs.length) return;
+    const last = msgs[msgs.length - 1];
+    const prevEl = document.getElementById('preview-' + u.id);
+    const timeEl = document.getElementById('time-' + u.id);
+    if (prevEl) prevEl.textContent = last.mediaType ? mediaLabel(last.mediaType) : (last.content || '');
+    if (timeEl) timeEl.textContent = fmtTime(last.sentAt);
+
+    // Unread
+    const unreadRes  = await fetch(`${API}/messages/unread?senderId=${u.id}&receiverId=${currentUser.id}`);
+    const unreadData = await unreadRes.json();
+    const badge = document.getElementById('badge-' + u.id);
+    if (badge && unreadData.unread > 0) {
+      badge.textContent = unreadData.unread;
+      badge.style.display = 'inline';
+    } else if (badge) {
+      badge.style.display = 'none';
+    }
+  } catch(_) {}
+}
+
+/* ── Open conversation ───────────────────────────── */
+async function openChat(userId) {
+  activeContact = allUsers.find(u => u.id === userId);
+  if (!activeContact) return;
+
+  // Update sidebar active state
+  document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+  const items = document.getElementById('user-list').children;
+  [...items].forEach(el => {
+    if (el.querySelector(`[id="preview-${userId}"]`)) el.classList.add('active');
+  });
+
+  // Show chat
+  document.getElementById('chat-empty').style.display  = 'none';
+  const ac = document.getElementById('active-chat');
+  ac.style.display = 'flex';
+
+  // Set header
+  const av = document.getElementById('chat-avatar');
+  av.textContent = initials(activeContact.name);
+  av.style.background = activeContact.avatarColor || '#c4b5fd';
+  av.style.color = '#2d1f4e';
+  document.getElementById('chat-name').textContent   = activeContact.name;
+  document.getElementById('chat-status').textContent = activeContact.online ? '● Active now' : 'Offline';
+
+  await loadMessages();
+  document.getElementById('msg-input').focus();
+}
+
+async function loadMessages() {
+  if (!activeContact) return;
+  try {
+    const res  = await fetch(`${API}/messages/conversation?userA=${currentUser.id}&userB=${activeContact.id}`);
+    const msgs = await res.json();
+    renderMessages(msgs);
+    // refresh sidebar previews
+    loadUserPreview(activeContact);
+  } catch(_) {}
+}
+
+function renderMessages(msgs) {
+  const box = document.getElementById('messages');
+  if (!msgs.length) {
+    box.innerHTML = `<div style="color:var(--muted);text-align:center;margin-top:70px;font-size:15px">
+      <div style="font-size:48px;margin-bottom:10px">💌</div>Start the conversation!</div>`;
+    return;
+  }
+
+  let lastDay = '';
+  box.innerHTML = msgs.map(m => {
+    const isMe = m.senderId === currentUser.id;
+    const day  = fmtDay(m.sentAt);
+    let dayHtml = '';
+    if (day !== lastDay) {
+      dayHtml = `<div class="day-label"><span>${day}</span></div>`;
+      lastDay = day;
+    }
+
+    let mediaHtml = '';
+    if (m.mediaType === 'image' && m.mediaUrl) {
+      mediaHtml = `<img src="${API.replace('/api','')}${m.mediaUrl}" onclick="openLightbox(this.src)" loading="lazy"/>`;
+    } else if (m.mediaType === 'video' && m.mediaUrl) {
+      mediaHtml = `<video src="${API.replace('/api','')}${m.mediaUrl}" controls></video>`;
+    } else if (m.mediaType === 'file' && m.mediaUrl) {
+      mediaHtml = `<a class="file-link" href="${API.replace('/api','')}${m.mediaUrl}" download="${esc(m.mediaName||'file')}">📎 ${esc(m.mediaName||'Download')}</a>`;
+    }
+
+    const timeHtml = `<div class="msg-time">${fmtTime(m.sentAt)}${isMe?'<span class="tick"> ✓✓</span>':''}</div>`;
+    const contentHtml = m.content ? `<div>${esc(m.content)}</div>` : '';
+
+    const avatarHtml = `<div class="avatar sm" style="background:${
+      isMe ? (currentUser.avatarColor||'#c4b5fd') : (activeContact?.avatarColor||'#c4b5fd')
+    };color:#2d1f4e;flex-shrink:0">${initials(isMe?currentUser.name:activeContact?.name||'?')}</div>`;
+
+    return `${dayHtml}
+      <div class="msg-row ${isMe?'me':'them'}">
+        ${!isMe ? avatarHtml : ''}
+        <div class="bubble">${mediaHtml}${contentHtml}${timeHtml}</div>
+        ${isMe ? avatarHtml : ''}
+      </div>`;
+  }).join('');
+
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ── Send message ────────────────────────────────── */
+async function sendMessage() {
+  const text = document.getElementById('msg-input').value.trim();
+  if (!text && !mediaFile) return;
+  if (!activeContact) return;
+
+  const btn = document.querySelector('.send-btn');
+  btn.disabled = true;
+
+  const fd = new FormData();
+  fd.append('senderId',   currentUser.id);
+  fd.append('receiverId', activeContact.id);
+  if (text)      fd.append('content', text);
+  if (mediaFile) fd.append('file', mediaFile);
+
+  try {
+    const res = await fetch(`${API}/messages/send`, {method:'POST', body:fd});
+    if (res.ok) {
+      document.getElementById('msg-input').value = '';
+      clearMedia();
+      await loadMessages();
+    }
+  } catch(_) {}
+
+  btn.disabled = false;
+}
+
+/* ── Media handling ──────────────────────────────── */
+function fileSelected(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+  mediaFile = file;
+
+  const prev = document.getElementById('media-preview');
+  const cont = document.getElementById('preview-content');
+  prev.style.display = 'flex';
+
+  if (type === 'image') {
+    const url = URL.createObjectURL(file);
+    cont.innerHTML = `<img class="preview-img" src="${url}"/>`;
+  } else if (type === 'video') {
+    const url = URL.createObjectURL(file);
+    cont.innerHTML = `<video class="preview-img" src="${url}"></video>`;
+  } else {
+    cont.innerHTML = `<div class="preview-file">📎 ${esc(file.name)}</div>`;
+  }
+  input.value = '';
+}
+
+function clearMedia() {
+  mediaFile = null;
+  document.getElementById('media-preview').style.display = 'none';
+  document.getElementById('preview-content').innerHTML   = '';
+}
+
+/* ── Lightbox ────────────────────────────────────── */
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+/* ── Polling (refresh messages + users) ──────────── */
+async function refreshAll() {
+  if (activeContact) await loadMessages();
+  // refresh user online statuses
+  try {
+    const res = await fetch(`${API}/users`);
+    allUsers = (await res.json()).filter(u => u.id !== currentUser.id);
+    const q = document.getElementById('search-input').value;
+    renderUsers(q ? allUsers.filter(u =>
+      u.name.toLowerCase().includes(q.toLowerCase()) ||
+      u.email.toLowerCase().includes(q.toLowerCase())) : allUsers);
+  } catch(_) {}
+}
+
+/* ── Helpers ─────────────────────────────────────── */
+function val(id) { return document.getElementById(id).value.trim(); }
+
+function showAlert(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.style.display = 'block';
+}
+function clearAlert(id) {
+  const el = document.getElementById(id);
+  el.textContent = ''; el.style.display = 'none';
+}
+
+function initials(name) {
+  return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+
+function fmtDay(iso) {
+  if (!iso) return '';
+  const d   = new Date(iso);
+  const tod = new Date();
+  if (d.toDateString() === tod.toDateString()) return 'Today';
+  const yes = new Date(tod); yes.setDate(yes.getDate()-1);
+  if (d.toDateString() === yes.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString([], {day:'numeric', month:'short', year:'numeric'});
+}
+
+function mediaLabel(type) {
+  return type==='image'?'🖼️ Image':type==='video'?'🎥 Video':'📎 File';
+}
+
+function post(path, body) {
+  return fetch(API + path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+}
+</script>
+</body>
+</html>
