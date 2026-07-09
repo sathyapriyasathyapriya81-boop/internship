@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LandScope - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="dashboard-body">
+
+<nav class="navbar">
+    <div class="brand">Land<span>Scope</span></div>
+    <div class="nav-right">
+        <span class="user-name">Welcome, <strong>Admin</strong></span>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+</nav>
+
+<div class="dashboard-content">
+    <div class="welcome-banner">
+        <h2>Welcome to LandScope Dashboard</h2>
+        <p>Manage your land records efficiently and securely.</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">24</div>
+            <div class="stat-label">Total Records</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Pending Approvals</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">16</div>
+            <div class="stat-label">Verified Lands</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Disputes</div>
+        </div>
+    </div>
+
+    <h3 class="section-title">System Information</h3>
+    <div class="info-card">
+        <p>✅ Database Connected</p>
+        <p>✅ Spring Boot Running</p>
+        <p>✅ Session Active</p>
+        <p>📍 Land Registry System v1.0</p>
+    </div>
+</div>
+
+</body>
+</html>
