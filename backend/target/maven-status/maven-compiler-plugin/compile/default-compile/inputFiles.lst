@@ -1,0 +1,12 @@
+C:\pastelchat\backend\src\main\java\com\pastelchat\model\Message.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\repository\UserRepository.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\service\UserService.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\controller\UserController.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\repository\MessageRepository.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\config\SecurityConfig.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\config\WebConfig.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\controller\MessageController.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\controller\ViewController.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\model\User.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\PastelChatApplication.java
+C:\pastelchat\backend\src\main\java\com\pastelchat\service\MessageService.java
